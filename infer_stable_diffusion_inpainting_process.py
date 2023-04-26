@@ -77,7 +77,8 @@ class InferStableDiffusionInpainting(dataprocess.C2dImageTask):
 
     def __init__(self, name, param):
         dataprocess.C2dImageTask.__init__(self, name)
-        # Add input/output of the process here   
+        # Add input/output of the process here
+        self.add_input(dataprocess.CSemanticSegmentationIO())
         # Create parameters class
         if param is None:
             self.set_param_object(InferStableDiffusionInpaintingParam())
@@ -86,6 +87,7 @@ class InferStableDiffusionInpainting(dataprocess.C2dImageTask):
 
         self.device = torch.device("cpu")
         self.pipe = None
+        self.bin_img = None
 
     def get_progress_steps(self):
         # Function returning the number of progress steps for this process
@@ -108,14 +110,21 @@ class InferStableDiffusionInpainting(dataprocess.C2dImageTask):
         src_ini = src_image
         h_ori ,w_ori , _ = src_image.shape
 
-        if src_image.dtype == 'uint8':
-            imagef = img_as_float(src_image)
-        graph_input = self.get_input(1)
-        self.create_graphics_mask(imagef.shape[1], imagef.shape[0], graph_input)
-        binimg = self.get_graphics_mask(0)
+        # Get mask or create it from graphics input
+        mask_input = self.get_input(2)
+        if mask_input.is_data_available():
+            self.bin_img = mask_input.get_mask()
 
-        if binimg is not None:
-            mask_image = cv2.resize(binimg, (512, 512))
+        else:
+            if src_image.dtype == 'uint8':
+                imagef = img_as_float(src_image)
+            graph_input = self.get_input(1)
+            if graph_input.is_data_available():
+                self.create_graphics_mask(imagef.shape[1], imagef.shape[0], graph_input)
+                self.bin_img = self.get_graphics_mask(0)
+        
+        if self.bin_img is not None:
+            mask_image = cv2.resize(self.bin_img, (512, 512))
         else:
             raise Exception("No graphic input set.")
 
