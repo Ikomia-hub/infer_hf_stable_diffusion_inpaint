@@ -41,6 +41,7 @@ class InferStableDiffusionInpaintingParam(core.CWorkflowTaskParam):
         self.negative_prompt = ""
         self.num_images_per_prompt = 1
         self.output = "Output resized to input size"
+        self.update = False
 
     def set_values(self, param_map):
         # Set parameters values from Ikomia application
@@ -53,6 +54,7 @@ class InferStableDiffusionInpaintingParam(core.CWorkflowTaskParam):
         self.num_images_per_prompt = int(param_map["num_images_per_prompt"])
         self.output = param_map["output"]
         self.cuda = utils.strtobool(param_map["cuda"])
+        self.update = True
 
     def get_values(self):
         # Send parameters values to Ikomia application
