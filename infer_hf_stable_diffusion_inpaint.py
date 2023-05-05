@@ -30,10 +30,10 @@ class IkomiaPlugin(dataprocess.CPluginProcessInterface):
 
     def get_process_factory(self):
         # Instantiate process object
-        from infer_stable_diffusion_inpainting.infer_stable_diffusion_inpainting_process import InferStableDiffusionInpaintingFactory
-        return InferStableDiffusionInpaintingFactory()
+        from infer_hf_stable_diffusion_inpaint.infer_hf_stable_diffusion_inpaint_process import InferHfStableDiffusionInpaintFactory
+        return InferHfStableDiffusionInpaintFactory()
 
     def get_widget_factory(self):
         # Instantiate associated widget object
-        from infer_stable_diffusion_inpainting.infer_stable_diffusion_inpainting_widget import InferStableDiffusionInpaintingWidgetFactory
-        return InferStableDiffusionInpaintingWidgetFactory()
+        from infer_hf_stable_diffusion_inpaint.infer_hf_stable_diffusion_inpaint_widget import InferHfStableDiffusionInpaintWidgetFactory
+        return InferHfStableDiffusionInpaintWidgetFactory()

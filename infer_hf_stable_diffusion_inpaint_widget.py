@@ -18,10 +18,10 @@
 
 from ikomia import core, dataprocess
 from ikomia.utils import pyqtutils, qtconversion
-from infer_stable_diffusion_inpainting.infer_stable_diffusion_inpainting_process import InferStableDiffusionInpaintingParam
+from infer_hf_stable_diffusion_inpaint.infer_hf_stable_diffusion_inpaint_process import InferHfStableDiffusionInpaintParam
 from torch.cuda import is_available
 import os
-from infer_stable_diffusion_inpainting.utils import Autocomplete
+from infer_hf_stable_diffusion_inpaint.utils import Autocomplete
 # PyQt GUI framework
 from PyQt5.QtWidgets import *
 
@@ -30,13 +30,13 @@ from PyQt5.QtWidgets import *
 # - Class which implements widget associated with the process
 # - Inherits PyCore.CWorkflowTaskWidget from Ikomia API
 # --------------------
-class InferStableDiffusionInpaintingWidget(core.CWorkflowTaskWidget):
+class InferHfStableDiffusionInpaintWidget(core.CWorkflowTaskWidget):
 
     def __init__(self, param, parent):
         core.CWorkflowTaskWidget.__init__(self, parent)
 
         if param is None:
-            self.parameters = InferStableDiffusionInpaintingParam()
+            self.parameters = InferHfStableDiffusionInpaintParam()
         else:
             self.parameters = param
 
@@ -136,13 +136,13 @@ class InferStableDiffusionInpaintingWidget(core.CWorkflowTaskWidget):
 # - Factory class to build process widget object
 # - Inherits PyDataProcess.CWidgetFactory from Ikomia API
 # --------------------
-class InferStableDiffusionInpaintingWidgetFactory(dataprocess.CWidgetFactory):
+class InferHfStableDiffusionInpaintWidgetFactory(dataprocess.CWidgetFactory):
 
     def __init__(self):
         dataprocess.CWidgetFactory.__init__(self)
         # Set the name of the process -> it must be the same as the one declared in the process factory class
-        self.name = "infer_stable_diffusion_inpainting"
+        self.name = "infer_hf_stable_diffusion_inpaint"
 
     def create(self, param):
         # Create widget object
-        return InferStableDiffusionInpaintingWidget(param, None)
+        return InferHfStableDiffusionInpaintWidget(param, None)

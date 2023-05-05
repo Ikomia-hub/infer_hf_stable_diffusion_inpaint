@@ -28,7 +28,7 @@ from skimage import img_as_float
 # - Class to handle the process parameters
 # - Inherits PyCore.CWorkflowTaskParam from Ikomia API
 # --------------------
-class InferStableDiffusionInpaintingParam(core.CWorkflowTaskParam):
+class InferHfStableDiffusionInpaintParam(core.CWorkflowTaskParam):
 
     def __init__(self):
         core.CWorkflowTaskParam.__init__(self)
@@ -75,7 +75,7 @@ class InferStableDiffusionInpaintingParam(core.CWorkflowTaskParam):
 # - Class which implements the process
 # - Inherits PyCore.CWorkflowTask or derived from Ikomia API
 # --------------------
-class InferStableDiffusionInpainting(dataprocess.C2dImageTask):
+class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
 
     def __init__(self, name, param):
         dataprocess.C2dImageTask.__init__(self, name)
@@ -83,7 +83,7 @@ class InferStableDiffusionInpainting(dataprocess.C2dImageTask):
         self.add_input(dataprocess.CSemanticSegmentationIO())
         # Create parameters class
         if param is None:
-            self.set_param_object(InferStableDiffusionInpaintingParam())
+            self.set_param_object(InferHfStableDiffusionInpaintParam())
         else:
             self.set_param_object(copy.deepcopy(param))
 
@@ -188,12 +188,12 @@ class InferStableDiffusionInpainting(dataprocess.C2dImageTask):
 # - Factory class to build process object
 # - Inherits PyDataProcess.CTaskFactory from Ikomia API
 # --------------------
-class InferStableDiffusionInpaintingFactory(dataprocess.CTaskFactory):
+class InferHfStableDiffusionInpaintFactory(dataprocess.CTaskFactory):
 
     def __init__(self):
         dataprocess.CTaskFactory.__init__(self)
         # Set process information as string here
-        self.info.name = "infer_stable_diffusion_inpainting"
+        self.info.name = "infer_hf_stable_diffusion_inpaint"
         self.info.short_description = "Stable diffusion inpainting models from Hugging Face."
         self.info.description = "This plugin proposes inference for stable diffusion " \
                                 "inpainting using diffusion models from Hugging Face."
@@ -215,4 +215,4 @@ class InferStableDiffusionInpaintingFactory(dataprocess.CTaskFactory):
 
     def create(self, param=None):
         # Create process object
-        return InferStableDiffusionInpainting(self.info.name, param)
+        return InferHfStableDiffusionInpaint(self.info.name, param)
