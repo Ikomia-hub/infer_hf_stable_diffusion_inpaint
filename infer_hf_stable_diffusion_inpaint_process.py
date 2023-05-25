@@ -90,6 +90,8 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
         self.device = torch.device("cpu")
         self.pipe = None
         self.bin_img = None
+        self.img_height = 512
+        self.img_width = 512
 
     def get_progress_steps(self):
         # Function returning the number of progress steps for this process
@@ -126,13 +128,13 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
                 self.bin_img = self.get_graphics_mask(0)
         
         if self.bin_img is not None:
-            mask_image = cv2.resize(self.bin_img, (512, 512))
+            mask_image = cv2.resize(self.bin_img, (self.img_height, self.img_width))
         else:
             raise Exception("No graphic input set.")
 
         # Resize image
         image_input = src_image[:, :, :3]
-        image_input = cv2.resize(image_input, (512, 512))
+        image_input = cv2.resize(image_input, (self.img_height, self.img_width))
 
         # Load pipeline
         if param.update or self.pipe is None:
