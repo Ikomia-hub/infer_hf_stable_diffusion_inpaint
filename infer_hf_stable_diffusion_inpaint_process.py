@@ -80,7 +80,8 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
     def __init__(self, name, param):
         dataprocess.C2dImageTask.__init__(self, name)
         # Add input/output of the process here
-        self.add_input(dataprocess.CSemanticSegmentationIO())
+        #self.add_input(dataprocess.CSemanticSegmentationIO())
+        self.add_input(dataprocess.CInstanceSegmentationIO())
         # Create parameters class
         if param is None:
             self.set_param_object(InferHfStableDiffusionInpaintParam())
@@ -115,10 +116,10 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
         h_ori ,w_ori , _ = src_image.shape
 
         # Get mask or create it from graphics input
-        mask_input = self.get_input(2)
-        if mask_input.is_data_available():
-            self.bin_img = mask_input.get_mask()
-
+        inst_input = self.get_input(2)
+        bin_mask_from_inst = inst_input.get_merge_mask()
+        if bin_mask_from_inst is not None:
+            self.bin_img = bin_mask_from_inst
         else:
             if src_image.dtype == 'uint8':
                 imagef = img_as_float(src_image)
