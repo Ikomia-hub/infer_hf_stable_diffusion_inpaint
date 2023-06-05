@@ -142,7 +142,8 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
             torch_tensor_dtype = torch.float16 if param.cuda else torch.float32
             self.pipe = StableDiffusionInpaintPipeline.from_pretrained(
                                     param.model_name,
-                                    torch_dtype = torch_tensor_dtype,
+                                    torch_dtype=torch_tensor_dtype,
+                                    use_safetensors=False
                                 )
 
             self.pipe = self.pipe.to(self.device)
