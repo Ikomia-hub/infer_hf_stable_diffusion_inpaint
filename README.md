@@ -1,1 +1,1 @@
-# infer_stable_diffusion_inpainting
+# infer_hf_stable_diffusion_inpaint
