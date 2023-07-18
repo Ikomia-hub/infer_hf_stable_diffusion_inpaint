@@ -28,6 +28,8 @@ from skimage import img_as_float
 # - Class to handle the process parameters
 # - Inherits PyCore.CWorkflowTaskParam from Ikomia API
 # --------------------
+
+
 class InferHfStableDiffusionInpaintParam(core.CWorkflowTaskParam):
 
     def __init__(self):
@@ -80,8 +82,9 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
     def __init__(self, name, param):
         dataprocess.C2dImageTask.__init__(self, name)
         # Add input/output of the process here
-        #self.add_input(dataprocess.CSemanticSegmentationIO())
         self.add_input(dataprocess.CInstanceSegmentationIO())
+        self.add_input(dataprocess.CSemanticSegmentationIO())
+
         # Create parameters class
         if param is None:
             self.set_param_object(InferHfStableDiffusionInpaintParam())
@@ -113,55 +116,67 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
 
         # Check input image format and generate binary mask
         src_ini = src_image
-        h_ori ,w_ori , _ = src_image.shape
+        h_ori, w_ori, _ = src_image.shape
 
         # Get mask or create it from graphics input
-        inst_input = self.get_input(2)
-        bin_mask_from_inst = inst_input.get_merge_mask()
-        if bin_mask_from_inst is not None:
+        inst_input = self.get_input(2)  # Instance segmentation mask
+        seg_input = self.get_input(3)  # Semantic segmentation mask
+        if inst_input.is_data_available():
+            print("Instance segmentation mask available")
+            bin_mask_from_inst = inst_input.get_merge_mask()
+        # if bin_mask_from_inst is not None:
             self.bin_img = bin_mask_from_inst
+        elif seg_input.is_data_available():
+            print("Semantic segmentation mask available")
+            bin_mask_from_seg = seg_input.get_mask()
+            self.bin_img = bin_mask_from_seg
         else:
             if src_image.dtype == 'uint8':
                 imagef = img_as_float(src_image)
             graph_input = self.get_input(1)
             if graph_input.is_data_available():
-                self.create_graphics_mask(imagef.shape[1], imagef.shape[0], graph_input)
+                print("Graphics input available")
+                self.create_graphics_mask(
+                    imagef.shape[1], imagef.shape[0], graph_input)
                 self.bin_img = self.get_graphics_mask(0)
-        
+
         if self.bin_img is not None:
-            mask_image = cv2.resize(self.bin_img, (self.img_height, self.img_width))
+            mask_image = cv2.resize(
+                self.bin_img, (self.img_height, self.img_width))
         else:
             raise Exception("No graphic input set.")
 
         # Resize image
         image_input = src_image[:, :, :3]
-        image_input = cv2.resize(image_input, (self.img_height, self.img_width))
+        image_input = cv2.resize(
+            image_input, (self.img_height, self.img_width))
 
         # Load pipeline
         if param.update or self.pipe is None:
-            self.device = torch.device("cuda") if param.cuda else torch.device("cpu")
+            self.device = torch.device(
+                "cuda") if param.cuda else torch.device("cpu")
             torch_tensor_dtype = torch.float16 if param.cuda else torch.float32
             self.pipe = StableDiffusionInpaintPipeline.from_pretrained(
-                                    param.model_name,
-                                    torch_dtype=torch_tensor_dtype,
-                                    use_safetensors=False
-                                )
+                param.model_name,
+                torch_dtype=torch_tensor_dtype,
+                use_safetensors=False
+            )
 
             self.pipe = self.pipe.to(self.device)
 
         # Inference
         image = self.pipe(
-                    prompt=param.prompt,
-                    image=image_input,
-                    mask_image=mask_image,
-                    num_inference_steps=param.num_inference_steps,
-                    guidance_scale = param.guidance_scale,
-                    num_images_per_prompt  = param.num_images_per_prompt,
-                    negative_prompt = param.negative_prompt,
-                    ).images
+            prompt=param.prompt,
+            image=image_input,
+            mask_image=mask_image,
+            num_inference_steps=param.num_inference_steps,
+            guidance_scale=param.guidance_scale,
+            num_images_per_prompt=param.num_images_per_prompt,
+            negative_prompt=param.negative_prompt,
+        ).images
 
         # Set output(s)
-        image_numpy = np.array(image[0].resize((w_ori,h_ori)))
+        image_numpy = np.array(image[0].resize((w_ori, h_ori)))
         if param.output == "Burned-in mask":
             Inpainted_img = self.apply_graphics_mask(src_ini, image_numpy, 0)
             output = self.get_output(0)
@@ -171,11 +186,12 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
             output.set_image(image_numpy)
 
         if len(image) > 1:
-            for i in range(1,len(image)):
+            for i in range(1, len(image)):
                 self.add_output(dataprocess.CImageIO())
-                image_numpy = np.array(image[i].resize((w_ori,h_ori)))
+                image_numpy = np.array(image[i].resize((w_ori, h_ori)))
                 if param.output == "Burned-in mask":
-                    Inpainted_img = self.apply_graphics_mask(src_ini, image_numpy, 0)
+                    Inpainted_img = self.apply_graphics_mask(
+                        src_ini, image_numpy, 0)
                     output = self.get_output(i)
                     output.set_image(Inpainted_img)
                 else:
@@ -192,6 +208,8 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
 # - Factory class to build process object
 # - Inherits PyDataProcess.CTaskFactory from Ikomia API
 # --------------------
+
+
 class InferHfStableDiffusionInpaintFactory(dataprocess.CTaskFactory):
 
     def __init__(self):
@@ -199,11 +217,11 @@ class InferHfStableDiffusionInpaintFactory(dataprocess.CTaskFactory):
         # Set process information as string here
         self.info.name = "infer_hf_stable_diffusion_inpaint"
         self.info.short_description = "Stable diffusion inpainting models from Hugging Face."
-        self.info.description = "This plugin proposes inference for stable diffusion " \
+        self.info.description = "This algorithm proposes inference for stable diffusion " \
                                 "inpainting using diffusion models from Hugging Face."
         # relative path -> as displayed in Ikomia application process tree
         self.info.path = "Plugins/Python/Diffusion"
-        self.info.version = "1.0.0"
+        self.info.version = "1.1.0"
         self.info.icon_path = "icons/icon.png"
         self.info.authors = "Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, Björn Ommer."
         self.info.article = "High-Resolution Image Synthesis with Latent Diffusion Models"
@@ -215,7 +233,7 @@ class InferHfStableDiffusionInpaintFactory(dataprocess.CTaskFactory):
         # Code source repository
         self.info.repository = "https://github.com/Stability-AI/stablediffusion"
         # Keywords used for search
-        self.info.keywords = "stable diffusion,inpainting,huggingface, Stability-AI"
+        self.info.keywords = "Stable Diffusion, Inpainting, Huggingface, Stability-AI"
 
     def create(self, param=None):
         # Create process object
