@@ -51,17 +51,16 @@ class InferHfStableDiffusionInpaintWidget(core.CWorkflowTaskWidget):
                                                  self.parameters.cuda and is_available())
         self.check_cuda.setEnabled(is_available())
 
-
         # # Model name
-        # self.edit_model_name = pyqtutils.append_edit(self.grid_layout, "Model name", self.parameters.model_name)
 
         model_list_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                                        "model_list.txt")
+                                       "model_list.txt")
         model_list_file = open(model_list_path, "r")
 
         model_list = model_list_file.read()
         model_list = model_list.split("\n")
-        self.combo_model = Autocomplete(model_list, parent=None, i=True, allow_duplicates=False)
+        self.combo_model = Autocomplete(
+            model_list, parent=None, i=True, allow_duplicates=False)
         self.label_model = QLabel("Model name")
         self.grid_layout.addWidget(self.combo_model, 0, 1)
         self.grid_layout.addWidget(self.label_model, 0, 0)
@@ -69,46 +68,41 @@ class InferHfStableDiffusionInpaintWidget(core.CWorkflowTaskWidget):
         model_list_file.close()
 
         # Prompt
-        self.edit_prompt = pyqtutils.append_edit(self.grid_layout, "Prompt", self.parameters.prompt)
+        self.edit_prompt = pyqtutils.append_edit(
+            self.grid_layout, "Prompt", self.parameters.prompt)
 
         # Number of inference steps
         self.spin_number_of_steps = pyqtutils.append_spin(
-                                                    self.grid_layout,
-                                                    "Number of steps",
-                                                    self.parameters.num_inference_steps,
-                                                    min=1, 
-                                                    )
+            self.grid_layout,
+            "Number of steps",
+            self.parameters.num_inference_steps,
+            min=1,
+        )
         # Guidance scale
         self.spin_guidance_scale = pyqtutils.append_double_spin(
-                                                        self.grid_layout,
-                                                        "Guidance scale",
-                                                        self.parameters.guidance_scale,
-                                                        min=0, step=0.1, decimals=1
-                                                    )
+            self.grid_layout,
+            "Guidance scale",
+            self.parameters.guidance_scale,
+            min=0, step=0.1, decimals=1
+        )
 
         # Negative prompt
         self.edit_negative_prompt = pyqtutils.append_edit(
-                                                    self.grid_layout,
-                                                    "Negative prompt",
-                                                    self.parameters.negative_prompt
-                                                    )
+            self.grid_layout,
+            "Negative prompt",
+            self.parameters.negative_prompt
+        )
 
         # Number of images per prompt
         self.num_images_per_prompt = pyqtutils.append_spin(self.grid_layout,
-                                                        "Number of images per prompt",
-                                                        self.parameters.num_images_per_prompt,
-                                                        min=1,
-                                                        )
-
-        # Output
-        self.combo_output = pyqtutils.append_combo(self.grid_layout, "Output")
-        self.combo_output.addItem("Resize to input size")
-        self.combo_output.addItem("Burned-in mask")
-        self.combo_output.setCurrentText(self.parameters.output)
+                                                           "Number of images per prompt",
+                                                           self.parameters.num_images_per_prompt,
+                                                           min=1,
+                                                           )
 
         # Link of some available models
         urlLink = "<a href=\"https://huggingface.co/models?sort=downloads&search=stable_diffusion_inpaint\">"\
-                 "List of models available on [Hugging Face Hub] </a>"
+            "List of models available on [Hugging Face Hub] </a>"
         self.qlabelModelLink = QLabel(urlLink)
         self.qlabelModelLink.setOpenExternalLinks(True)
         self.grid_layout.addWidget(self.qlabelModelLink, 8, 1)
@@ -125,7 +119,6 @@ class InferHfStableDiffusionInpaintWidget(core.CWorkflowTaskWidget):
         self.parameters.prompt = self.edit_prompt.text()
         self.parameters.negative_prompt = self.edit_negative_prompt.text()
         self.parameters.num_images_per_prompt = self.num_images_per_prompt.value()
-        self.parameters.output = self.combo_output.currentText()
         self.parameters.cuda = self.check_cuda.isChecked()
 
         # Send signal to launch the process

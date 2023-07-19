@@ -42,7 +42,6 @@ class InferHfStableDiffusionInpaintParam(core.CWorkflowTaskParam):
         self.cuda = torch.cuda.is_available()
         self.negative_prompt = ""
         self.num_images_per_prompt = 1
-        self.output = "Output resized to input size"
         self.update = False
 
     def set_values(self, param_map):
@@ -54,7 +53,6 @@ class InferHfStableDiffusionInpaintParam(core.CWorkflowTaskParam):
         self.num_inference_steps = int(param_map["num_inference_steps"])
         self.negative_prompt = param_map["negative_prompt"]
         self.num_images_per_prompt = int(param_map["num_images_per_prompt"])
-        self.output = param_map["output"]
         self.cuda = utils.strtobool(param_map["cuda"])
         self.update = True
 
@@ -69,7 +67,6 @@ class InferHfStableDiffusionInpaintParam(core.CWorkflowTaskParam):
         param_map["cuda"] = str(self.cuda)
         param_map["negative_prompt"] = str(self.negative_prompt)
         param_map["num_images_per_prompt"] = str(self.num_images_per_prompt)
-        param_map["output"] = str(self.output)
         return param_map
 
 
@@ -177,26 +174,14 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
 
         # Set output(s)
         image_numpy = np.array(image[0].resize((w_ori, h_ori)))
-        if param.output == "Burned-in mask":
-            Inpainted_img = self.apply_graphics_mask(src_ini, image_numpy, 0)
-            output = self.get_output(0)
-            output.set_image(Inpainted_img)
-        else:
-            output = self.get_output(0)
-            output.set_image(image_numpy)
-
+        output = self.get_output(0)
+        output.set_image(image_numpy)
         if len(image) > 1:
             for i in range(1, len(image)):
                 self.add_output(dataprocess.CImageIO())
                 image_numpy = np.array(image[i].resize((w_ori, h_ori)))
-                if param.output == "Burned-in mask":
-                    Inpainted_img = self.apply_graphics_mask(
-                        src_ini, image_numpy, 0)
-                    output = self.get_output(i)
-                    output.set_image(Inpainted_img)
-                else:
-                    output = self.get_output(i)
-                    output.set_image(image_numpy)
+                output = self.get_output(i)
+                output.set_image(image_numpy)
 
         # Step progress bar:
         self.emit_step_progress()
