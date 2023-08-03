@@ -1,5 +1,4 @@
 import logging
-from ikomia.core import task
 from ikomia.utils.tests import run_for_test
 
 
