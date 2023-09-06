@@ -1,37 +1,117 @@
-# infer_hf_stable_diffusion_inpaint
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Ikomia-hub/infer_hf_stable_diffusion_inpaint/main/icons/icon.png" alt="Algorithm icon">
+  <h1 align="center">infer_hf_stable_diffusion_inpaint</h1>
+</div>
+<br />
+<p align="center">
+    <a href="https://github.com/Ikomia-hub/infer_hf_stable_diffusion_inpaint">
+        <img alt="Stars" src="https://img.shields.io/github/stars/Ikomia-hub/infer_hf_stable_diffusion_inpaint">
+    </a>
+    <a href="https://app.ikomia.ai/hub/">
+        <img alt="Website" src="https://img.shields.io/website/http/app.ikomia.ai/en.svg?down_color=red&down_message=offline&up_message=online">
+    </a>
+    <a href="https://github.com/Ikomia-hub/infer_hf_stable_diffusion_inpaint/blob/main/LICENSE.md">
+        <img alt="GitHub" src="https://img.shields.io/github/license/Ikomia-hub/infer_hf_stable_diffusion_inpaint.svg?color=blue">
+    </a>    
+    <br>
+    <a href="https://discord.com/invite/82Tnw9UGGc">
+        <img alt="Discord community" src="https://img.shields.io/badge/Discord-white?style=social&logo=discord">
+    </a> 
+</p>
 
+This algorithm proposes inference for stable diffusion inpainting using diffusion models from Hugging Face.
 
-## :rocket: Inference with Ikomia API
+[Insert illustrative image here. Image must be accessible publicly, in algorithm Github repository for example.
+<img src="images/illustration.png"  alt="Illustrative image" width="30%" height="30%">]
 
-``` python
+## :rocket: Use with Ikomia API
+
+#### 1. Install Ikomia API
+
+We strongly recommend using a virtual environment. If you're not sure where to start, we offer a tutorial [here](https://www.ikomia.ai/blog/a-step-by-step-guide-to-creating-virtual-environments-in-python).
+
+```sh
+pip install ikomia
+```
+
+#### 2. Create your workflow
+
+[Change the sample image URL to fit algorithm purpose]
+
+```python
+import ikomia
 from ikomia.dataprocess.workflow import Workflow
-from ikomia.utils import ik
-from ikomia.utils.displayIO import display
 
 # Init your workflow
 wf = Workflow()
 
-sam = wf.add_task(ik.infer_segment_anything(
-    model_name='vit_b',
-    image_path='./Path/To/Your/Image'),
-    auto_connect=True
-)
+# Add algorithm
+algo = wf.add_task(name="infer_hf_stable_diffusion_inpaint", auto_connect=True)
 
-sd_inpaint = wf.add_task(ik.infer_hf_stable_diffusion_inpaint(
-    model_name = 'stabilityai/stable-diffusion-2-inpainting',
-    prompt = 'Face of a yellow cat, high resolution, sitting on a park bench',
-    negative_prompt = 'low quality',
-    num_inference_steps = 100,
-    guidance_scale = 7.5,
-    num_images_per_prompt = 1,
-    ),
-    auto_connect=True
-)
+# Run on your image  
+wf.run_on(url="example_image.png")
+```
 
-# Run directly on your image
-wf.run_on(path='./Path/To/Your/Image')
+## :sunny: Use with Ikomia Studio
 
-display(sam.get_image_with_mask())
-display(sd_inpaint.get_output(0).get_image())
+Ikomia Studio offers a friendly UI with the same features as the API.
+
+- If you haven't started using Ikomia Studio yet, download and install it from [this page](https://www.ikomia.ai/studio).
+
+- For additional guidance on getting started with Ikomia Studio, check out [this blog post](https://www.ikomia.ai/blog/how-to-get-started-with-ikomia-studio).
+
+## :pencil: Set algorithm parameters
+
+[Explain each algorithm parameters]
+
+[Change the sample image URL to fit algorithm purpose]
+
+```python
+import ikomia
+from ikomia.dataprocess.workflow import Workflow
+
+# Init your workflow
+wf = Workflow()
+
+# Add algorithm
+algo = wf.add_task(name="infer_hf_stable_diffusion_inpaint", auto_connect=True)
+
+algo.set_parameters({
+    "param1": "value1",
+    "param2": "value2",
+    ...
+})
+
+# Run on your image  
+wf.run_on(url="example_image.png")
 
 ```
+
+## :mag: Explore algorithm outputs
+
+Every algorithm produces specific outputs, yet they can be explored them the same way using the Ikomia API. For a more in-depth understanding of managing algorithm outputs, please refer to the [documentation](https://ikomia-dev.github.io/python-api-documentation/advanced_guide/IO_management.html).
+
+```python
+import ikomia
+from ikomia.dataprocess.workflow import Workflow
+
+# Init your workflow
+wf = Workflow()
+
+# Add algorithm
+algo = wf.add_task(name="infer_hf_stable_diffusion_inpaint", auto_connect=True)
+
+# Run on your image  
+wf.run_on(url="example_image.png")
+
+# Iterate over outputs
+for output in algo.get_outputs()
+    # Print information
+    print(output)
+    # Export it to JSON
+    output.to_json()
+```
+
+## :fast_forward: Advanced usage 
+
+[optional]
