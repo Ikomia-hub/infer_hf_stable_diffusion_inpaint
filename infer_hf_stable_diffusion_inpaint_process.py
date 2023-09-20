@@ -23,6 +23,7 @@ import torch
 import numpy as np
 import cv2
 from skimage import img_as_float
+import os
 
 # --------------------
 # - Class to handle the process parameters
@@ -93,6 +94,8 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
         self.bin_img = None
         self.img_height = 512
         self.img_width = 512
+        self.model_folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), "weights")
+
 
     def get_progress_steps(self):
         # Function returning the number of progress steps for this process
@@ -118,6 +121,7 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
         # Get mask or create it from graphics input
         inst_input = self.get_input(2)  # Instance segmentation mask
         seg_input = self.get_input(3)  # Semantic segmentation mask
+        print(inst_input)
         if inst_input.is_data_available():
             print("Instance segmentation mask available")
             bin_mask_from_inst = inst_input.get_merge_mask()
@@ -156,7 +160,8 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
             self.pipe = StableDiffusionInpaintPipeline.from_pretrained(
                 param.model_name,
                 torch_dtype=torch_tensor_dtype,
-                use_safetensors=False
+                use_safetensors=False,
+                cache_dir=self.model_folder
             )
 
             self.pipe = self.pipe.to(self.device)
