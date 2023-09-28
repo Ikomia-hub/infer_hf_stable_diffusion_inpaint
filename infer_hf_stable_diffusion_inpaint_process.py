@@ -207,8 +207,6 @@ class InferHfStableDiffusionInpaintFactory(dataprocess.CTaskFactory):
         # Set process information as string here
         self.info.name = "infer_hf_stable_diffusion_inpaint"
         self.info.short_description = "Stable diffusion inpainting models from Hugging Face."
-        self.info.description = "This algorithm proposes inference for stable diffusion " \
-                                "inpainting using diffusion models from Hugging Face."
         # relative path -> as displayed in Ikomia application process tree
         self.info.path = "Plugins/Python/Diffusion"
         self.info.version = "1.1.1"
@@ -221,7 +219,8 @@ class InferHfStableDiffusionInpaintFactory(dataprocess.CTaskFactory):
         # URL of documentation
         self.info.documentation_link = "https://arxiv.org/pdf/2112.10752.pdf"
         # Code source repository
-        self.info.repository = "https://github.com/Stability-AI/stablediffusion"
+        self.info.repository = "https://github.com/Ikomia-hub/infer_hf_stable_diffusion_inpaint"
+        self.info.original_repository = "https://github.com/Stability-AI/stablediffusion"
         # Keywords used for search
         self.info.keywords = "Stable Diffusion, Inpainting, Huggingface, Stability-AI"
 
