@@ -223,6 +223,8 @@ class InferHfStableDiffusionInpaintFactory(dataprocess.CTaskFactory):
         self.info.original_repository = "https://github.com/Stability-AI/stablediffusion"
         # Keywords used for search
         self.info.keywords = "Stable Diffusion, Inpainting, Huggingface, Stability-AI"
+        self.info.algo_type = core.AlgoType.INFER
+        self.info.algo_tasks = "INPAINTING"
 
     def create(self, param=None):
         # Create process object
