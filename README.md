@@ -21,7 +21,7 @@
 
 This algorithm proposes inference for stable diffusion inpainting using diffusion models from Hugging Face.
 
-![Stable diffusion](https://raw.githubusercontent.com/Ikomia-hubinfer_hf_stable_diffusion_inpaint/main/icons/output.jpg)
+![Stable diffusion](https://raw.githubusercontent.com/Ikomia-hub/infer_hf_stable_diffusion_inpaint/main/icons/output.jpg)
 
 
 
