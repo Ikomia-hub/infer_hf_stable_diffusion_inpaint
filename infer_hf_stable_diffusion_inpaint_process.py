@@ -165,6 +165,7 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
             )
 
             self.pipe = self.pipe.to(self.device)
+            self.pipe.enable_attention_slicing()
 
         # Inference
         image = self.pipe(
@@ -209,7 +210,7 @@ class InferHfStableDiffusionInpaintFactory(dataprocess.CTaskFactory):
         self.info.short_description = "Stable diffusion inpainting models from Hugging Face."
         # relative path -> as displayed in Ikomia application process tree
         self.info.path = "Plugins/Python/Diffusion"
-        self.info.version = "1.1.1"
+        self.info.version = "1.1.2"
         self.info.icon_path = "icons/icon.png"
         self.info.authors = "Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, Björn Ommer."
         self.info.article = "High-Resolution Image Synthesis with Latent Diffusion Models"
