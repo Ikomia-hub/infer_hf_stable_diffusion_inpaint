@@ -121,7 +121,6 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
         # Get mask or create it from graphics input
         inst_input = self.get_input(2)  # Instance segmentation mask
         seg_input = self.get_input(3)  # Semantic segmentation mask
-        print(inst_input)
         if inst_input.is_data_available():
             print("Instance segmentation mask available")
             bin_mask_from_inst = inst_input.get_merge_mask()
