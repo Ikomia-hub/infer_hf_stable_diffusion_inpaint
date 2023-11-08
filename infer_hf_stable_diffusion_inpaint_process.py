@@ -115,7 +115,6 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
         src_image = image_in.get_image()
 
         # Check input image format and generate binary mask
-        src_ini = src_image
         h_ori, w_ori, _ = src_image.shape
 
         # Get mask or create it from graphics input
