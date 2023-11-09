@@ -166,15 +166,16 @@ class InferHfStableDiffusionInpaint(dataprocess.C2dImageTask):
             self.pipe.enable_attention_slicing()
 
         # Inference
-        image = self.pipe(
-            prompt=param.prompt,
-            image=image_input,
-            mask_image=mask_image,
-            num_inference_steps=param.num_inference_steps,
-            guidance_scale=param.guidance_scale,
-            num_images_per_prompt=param.num_images_per_prompt,
-            negative_prompt=param.negative_prompt,
-        ).images
+        with torch.no_grad(): 
+            image = self.pipe(
+                prompt=param.prompt,
+                image=image_input,
+                mask_image=mask_image,
+                num_inference_steps=param.num_inference_steps,
+                guidance_scale=param.guidance_scale,
+                num_images_per_prompt=param.num_images_per_prompt,
+                negative_prompt=param.negative_prompt,
+            ).images
 
         # Set output(s)
         image_numpy = np.array(image[0].resize((w_ori, h_ori)))
@@ -208,7 +209,7 @@ class InferHfStableDiffusionInpaintFactory(dataprocess.CTaskFactory):
         self.info.short_description = "Stable diffusion inpainting models from Hugging Face."
         # relative path -> as displayed in Ikomia application process tree
         self.info.path = "Plugins/Python/Diffusion"
-        self.info.version = "1.1.2"
+        self.info.version = "1.1.3"
         self.info.icon_path = "icons/icon.png"
         self.info.authors = "Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, Björn Ommer."
         self.info.article = "High-Resolution Image Synthesis with Latent Diffusion Models"
