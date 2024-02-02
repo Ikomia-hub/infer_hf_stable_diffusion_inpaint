@@ -209,7 +209,7 @@ class InferHfStableDiffusionInpaintFactory(dataprocess.CTaskFactory):
         self.info.short_description = "Stable diffusion inpainting models from Hugging Face."
         # relative path -> as displayed in Ikomia application process tree
         self.info.path = "Plugins/Python/Diffusion"
-        self.info.version = "1.1.3"
+        self.info.version = "1.1.4"
         self.info.icon_path = "icons/icon.png"
         self.info.authors = "Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, Björn Ommer."
         self.info.article = "High-Resolution Image Synthesis with Latent Diffusion Models"
